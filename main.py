@@ -1,3 +1,5 @@
+import os
+
 import fitz  # PyMuPDF
 
 
@@ -15,6 +17,8 @@ def obtener_contenido_pdf(path_pdf) -> str:
 
 def son_iguales(file1, file2) -> bool:
     # Usar alguna estructura de datos para compararlos todos juntos?
+    # Debe comparar los de informe con los de informe ok
+    # Early return si la cantidad de hojas es desigual
     return obtener_contenido_pdf(file1) == obtener_contenido_pdf(file2)
 
 
@@ -25,7 +29,9 @@ def obtener_paginas_donde_hay_diferencias(file1, file2) -> list:
     paginas_diferentes = []
 
     if pdf1.page_count != pdf2.page_count:
-        print('no tienen la misma cantidad de paginas')  # Manejar esto, no deberia romperse
+        print('Los PDF tienen distinta cantidad de paginas')
+        print('Paginas pdf1: ' + str(pdf1.page_count))
+        print('Paginas pdf2: ' + str(pdf2.page_count))
 
     for numero_pagina in range(pdf1.page_count):  # Pensar como evitar esta nueva iteracion
         pagina_pdf1 = pdf1.load_page(numero_pagina)
@@ -41,7 +47,6 @@ def obtener_paginas_donde_hay_diferencias(file1, file2) -> list:
 
 
 def obtener_diferencias(file1, file2):
-    # TODO: refactorizar para que reciba una lista de paths
 
     if son_iguales(file1, file2):
         return 'No hay diferencias'
@@ -49,11 +54,29 @@ def obtener_diferencias(file1, file2):
     return obtener_paginas_donde_hay_diferencias(file1, file2)
 
 
-def main():
-    file1 = 'liviano.PDF'
-    file2 = 'pesado.PDF'
+def matchear_pdfs(input1, input2) -> list:
+    """
+    Retorna una lista con los nombres de los archivos que si tienen par
+    """
 
-    print(obtener_diferencias(file1, file2))
+    archivos_con_pares = []
+
+    for archivo in os.listdir(input1):
+        if archivo not in os.listdir(input2):
+            print('No se encontró el par del archivo ' + archivo)
+        else:
+            archivos_con_pares.append(archivo)
+
+    return archivos_con_pares
+
+
+def main():
+    # TODO: matchear archivos con mismo nombre para compararlos
+    directorio_outputs = 'input1'
+    directorio_outputs_ok = 'input2'
+    pares_a_comparar = matchear_pdfs(directorio_outputs, directorio_outputs_ok)
+
+    print(obtener_diferencias(pares_a_comparar))
 
 
 if __name__ == '__main__':
