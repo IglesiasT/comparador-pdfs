@@ -22,10 +22,7 @@ def son_iguales(file1, file2) -> bool:
     return obtener_contenido_pdf(file1) == obtener_contenido_pdf(file2)
 
 
-def obtener_paginas_donde_hay_diferencias(file1, file2) -> list:
-
-    pdf1 = fitz.open(file1)
-    pdf2 = fitz.open(file2)
+def obtener_paginas_donde_hay_diferencias(pdf1: fitz.Document, pdf2: fitz.Document) -> list:
     paginas_diferentes = []
 
     if pdf1.page_count != pdf2.page_count:
@@ -40,18 +37,24 @@ def obtener_paginas_donde_hay_diferencias(file1, file2) -> list:
         if pagina_pdf1.get_text() != pagina_pdf2.get_text():
             paginas_diferentes.append(numero_pagina)
 
-    pdf1.close()
-    pdf2.close()
-
     return paginas_diferentes
 
 
-def obtener_diferencias(file1, file2):
+def obtener_diferencias(archivos_a_comparar: list, input1, input2) -> dict:
+    archivos_con_diferencias = {}
 
-    if son_iguales(file1, file2):
-        return 'No hay diferencias'
+    for archivo in archivos_a_comparar:  # abrir dos archivos con fitz al mismo tiempo
+        pdf1 = fitz.open(os.path.join(input1, archivo))
+        pdf2 = fitz.open(os.path.join(input2, archivo))
 
-    return obtener_paginas_donde_hay_diferencias(file1, file2)
+        if not son_iguales(pdf1, pdf2):
+            archivos_con_diferencias[archivo] = obtener_paginas_donde_hay_diferencias(pdf1, pdf2)
+
+        # Una vez hechos los checkeos se cierran los archivos en la misma iteracion
+        pdf1.close()
+        pdf2.close()
+
+    return archivos_con_diferencias
 
 
 def matchear_pdfs(input1, input2) -> list:
@@ -74,6 +77,7 @@ def main():
     # TODO: matchear archivos con mismo nombre para compararlos
     directorio_outputs = 'input1'
     directorio_outputs_ok = 'input2'
+
     pares_a_comparar = matchear_pdfs(directorio_outputs, directorio_outputs_ok)
 
     print(obtener_diferencias(pares_a_comparar))
