@@ -16,9 +16,6 @@ def obtener_contenido_pdf(path_pdf) -> str:
 
 
 def son_iguales(file1, file2) -> bool:
-    # Usar alguna estructura de datos para compararlos todos juntos?
-    # Debe comparar los de informe con los de informe ok
-    # Early return si la cantidad de hojas es desigual
     return obtener_contenido_pdf(file1) == obtener_contenido_pdf(file2)
 
 
@@ -43,7 +40,7 @@ def obtener_paginas_donde_hay_diferencias(pdf1: fitz.Document, pdf2: fitz.Docume
 def obtener_diferencias(archivos_a_comparar: list, input1, input2) -> dict:
     archivos_con_diferencias = {}
 
-    for archivo in archivos_a_comparar:  # abrir dos archivos con fitz al mismo tiempo
+    for archivo in archivos_a_comparar:
         pdf1 = fitz.open(os.path.join(input1, archivo))
         pdf2 = fitz.open(os.path.join(input2, archivo))
 
@@ -74,13 +71,12 @@ def matchear_pdfs(input1, input2) -> list:
 
 
 def main():
-    # TODO: matchear archivos con mismo nombre para compararlos
-    directorio_outputs = 'input1'
-    directorio_outputs_ok = 'input2'
+    directorio_inputs = 'input1'
+    directorio_inputs_ok = 'input2'
 
-    pares_a_comparar = matchear_pdfs(directorio_outputs, directorio_outputs_ok)
+    pares_a_comparar = matchear_pdfs(directorio_inputs, directorio_inputs_ok)
 
-    print(obtener_diferencias(pares_a_comparar))
+    print(obtener_diferencias(pares_a_comparar, directorio_inputs, directorio_inputs_ok))
 
 
 if __name__ == '__main__':
