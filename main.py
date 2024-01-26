@@ -3,31 +3,30 @@ import os
 import fitz  # PyMuPDF
 
 
-def obtener_contenido_pdf(path_pdf) -> str:
-    archivo_pdf = fitz.open(path_pdf)
+def obtener_contenido(pdf: fitz.Document) -> str:
     texto = ''
 
-    for numero_pagina in range(archivo_pdf.page_count):
-        pagina = archivo_pdf.load_page(numero_pagina)
+    for numero_pagina in range(pdf.page_count):
+        pagina = pdf.load_page(numero_pagina)
         texto += pagina.get_text()
-    archivo_pdf.close()
 
     return texto
 
 
-def son_iguales(file1, file2) -> bool:
-    return obtener_contenido_pdf(file1) == obtener_contenido_pdf(file2)
+def son_iguales(pdf1: fitz.Document, pdf2: fitz.Document) -> bool:
+    return obtener_contenido(pdf1) == obtener_contenido(pdf2)
 
 
 def obtener_paginas_donde_hay_diferencias(pdf1: fitz.Document, pdf2: fitz.Document) -> list:
     paginas_diferentes = []
 
     if pdf1.page_count != pdf2.page_count:
-        print('Los PDF tienen distinta cantidad de paginas')
+        print(f'Los PDF de {pdf1.name} tienen distinta cantidad de paginas')
         print('Paginas pdf1: ' + str(pdf1.page_count))
         print('Paginas pdf2: ' + str(pdf2.page_count))
+        return paginas_diferentes  # TODO refactor
 
-    for numero_pagina in range(pdf1.page_count):  # Pensar como evitar esta nueva iteracion
+    for numero_pagina in range(pdf1.page_count):
         pagina_pdf1 = pdf1.load_page(numero_pagina)
         pagina_pdf2 = pdf2.load_page(numero_pagina)
 
@@ -57,6 +56,7 @@ def obtener_diferencias(archivos_a_comparar: list, input1, input2) -> dict:
 def matchear_pdfs(input1, input2) -> list:
     """
     Retorna una lista con los nombres de los archivos que si tienen par
+    Es recíproco que un archivo tenga par y sea analizable
     """
 
     archivos_con_pares = []
@@ -76,6 +76,7 @@ def main():
 
     pares_a_comparar = matchear_pdfs(directorio_inputs, directorio_inputs_ok)
 
+    # Actualmente muestra un diccionario con todos los pdf, pensar como mejorar eso
     print(obtener_diferencias(pares_a_comparar, directorio_inputs, directorio_inputs_ok))
 
 
