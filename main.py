@@ -37,20 +37,28 @@ def obtener_paginas_donde_hay_diferencias(pdf1: fitz.Document, pdf2: fitz.Docume
 
 
 def obtener_diferencias(archivos_a_comparar: list, input1, input2) -> dict:
-    archivos_con_diferencias = {}
+    """
+    Obtiene los diferencias de forma precisa de una lista de archivos pdf
+    (ahora mismo solo retorna un diccionario donde las keys son archivos
+    que tienen pares y los valores una lista de las páginas donde hay diferencias)
+    """
+    paginas_con_diferencias = {}
 
     for archivo in archivos_a_comparar:
         pdf1 = fitz.open(os.path.join(input1, archivo))
         pdf2 = fitz.open(os.path.join(input2, archivo))
 
         if not son_iguales(pdf1, pdf2):
-            archivos_con_diferencias[archivo] = obtener_paginas_donde_hay_diferencias(pdf1, pdf2)
+            paginas_con_diferencias[archivo] = obtener_paginas_donde_hay_diferencias(pdf1, pdf2)
 
         # Una vez hechos los checkeos se cierran los archivos en la misma iteracion
         pdf1.close()
         pdf2.close()
 
-    return archivos_con_diferencias
+    # Teniendo los archivos y las páginas donde hay diferencias
+    # buscar_diferencias_por_pagina(paginas_con_diferencias)
+
+    return paginas_con_diferencias
 
 
 def matchear_pdfs(input1, input2) -> list:

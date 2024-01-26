@@ -5,7 +5,7 @@ from main import son_iguales, obtener_paginas_donde_hay_diferencias
 
 class TestComparadorPDFs(unittest.TestCase):
     """
-    Proximo refactor: mockear la dependencia de los PDF
+    Siguiente refactor: mockear la dependencia de los PDF
     """
 
     def test_detecta_dos_pdf_iguales(self):
