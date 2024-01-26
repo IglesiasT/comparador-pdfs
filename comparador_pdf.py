@@ -3,14 +3,11 @@ import fitz  # PyMuPDF
 
 
 class ComparadorPDF:
-    input1 = ""
-    input2 = ""
-
     def __init__(self, input1, input2):
-        self.input1 = str(input1)
-        self.input2 = str(input2)
+        self._input1 = str(input1)
+        self._input2 = str(input2)
 
-    def matchear_pdfs(self) -> list:
+    def _matchear_pdfs(self) -> list:
         """
         Retorna una lista con los nombres de los archivos que si tienen par
         Es recíproco que un archivo tenga par y sea analizable
@@ -18,8 +15,8 @@ class ComparadorPDF:
 
         archivos_con_pares = []
 
-        for archivo in os.listdir(self.input1):
-            if archivo not in os.listdir(self.input2):
+        for archivo in os.listdir(self._input1):
+            if archivo not in os.listdir(self._input2):
                 print('No se encontró el par del archivo ' + archivo)
             else:
                 archivos_con_pares.append(archivo)
@@ -36,10 +33,11 @@ class ComparadorPDF:
 
         return texto
 
-    def son_iguales(self, pdf1: fitz.Document, pdf2: fitz.Document) -> bool:
+    def _son_iguales(self, pdf1: fitz.Document, pdf2: fitz.Document) -> bool:
         return self.obtener_contenido(pdf1) == self.obtener_contenido(pdf2)
 
-    def obtener_paginas_donde_hay_diferencias(self, pdf1: fitz.Document, pdf2: fitz.Document) -> list:
+    @staticmethod
+    def obtener_paginas_donde_hay_diferencias(pdf1: fitz.Document, pdf2: fitz.Document) -> list:
         # TODO devolver objeto no lista
         paginas_diferentes = []
 
@@ -60,19 +58,18 @@ class ComparadorPDF:
 
     def obtener_diferencias(self) -> dict:
         """
-        Obtiene los diferencias de forma precisa de una lista de archivos pdf
+        Obtiene las diferencias de forma precisa de una lista de archivos pdf
         (ahora mismo solo retorna un diccionario donde las keys son archivos
         que tienen pares y los valores una lista de las páginas donde hay diferencias)
-        TODO manejar todo con objetos
         """
-        archivos_a_comparar = self.matchear_pdfs()
+        archivos_a_comparar = self._matchear_pdfs()
         paginas_con_diferencias = {}
 
         for archivo in archivos_a_comparar:
-            pdf1 = fitz.open(os.path.join(self.input1, archivo))
-            pdf2 = fitz.open(os.path.join(self.input2, archivo))
+            pdf1 = fitz.open(os.path.join(self._input1, archivo))
+            pdf2 = fitz.open(os.path.join(self._input2, archivo))
 
-            if not self.son_iguales(pdf1, pdf2):
+            if not self._son_iguales(pdf1, pdf2):
                 paginas_con_diferencias[archivo] = self.obtener_paginas_donde_hay_diferencias(pdf1, pdf2)
 
             # Una vez hechos los checkeos se cierran los archivos en la misma iteracion
