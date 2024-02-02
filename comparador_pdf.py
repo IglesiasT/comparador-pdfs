@@ -2,6 +2,7 @@ import os
 import fitz  # PyMuPDF
 
 from diferencias.distinta_cantidad_de_paginas import DistintaCantidadDePaginas
+from diferencias.distinto_texto import DistintoTexto
 
 
 class ComparadorPDF:
@@ -35,25 +36,27 @@ class ComparadorPDF:
 
         return texto
 
-    def _son_iguales(self, pdf1: fitz.Document, pdf2: fitz.Document) -> bool:
-        return self.obtener_contenido(pdf1) == self.obtener_contenido(pdf2)
-
-    def obtener_paginas_donde_hay_diferencias(self, pdf1: fitz.Document, pdf2: fitz.Document) -> dict:
+    def obtener_diferencias(self, pdf1: fitz.Document, pdf2: fitz.Document) -> list:
         """
         Se toma como supuesto que los archivos ya vienen abiertos
+        TODO luego del refactor grande la idea seria que aqui se tome la decision de que tipo de
+        diferencias crear y devolver en la lista
         """
-        paginas_con_diferencias = {}
+        paginas_con_diferencias = []
 
-        for numero_pagina in range(pdf1.page_count):
+        if pdf1.page_count != pdf2.page_count:
+            return [DistintaCantidadDePaginas(pdf1.page_count, pdf2.page_count)]
+
+        for numero_pagina in range(pdf1.page_count):    # Sabiendo que ambos tienen misma cantidad de páginas
             pagina_pdf1 = pdf1.load_page(numero_pagina)
             pagina_pdf2 = pdf2.load_page(numero_pagina)
-            #import ipdb;ipdb.set_trace()
+
             if pagina_pdf1.get_text() != pagina_pdf2.get_text():
-                paginas_con_diferencias[numero_pagina + 1] = "Lista con diferencias"
+                paginas_con_diferencias.append(DistintoTexto(numero_pagina + 1))
 
         return paginas_con_diferencias
 
-    def obtener_diferencias(self) -> dict:
+    def obtener_archivos_con_diferencias(self) -> dict:
         """
         Obtiene las diferencias de forma precisa de una lista de archivos pdf
         (ahora mismo solo retorna un diccionario donde las keys son archivos
@@ -66,12 +69,7 @@ class ComparadorPDF:
             pdf1 = fitz.open(os.path.join(self._input1, archivo))
             pdf2 = fitz.open(os.path.join(self._input2, archivo))
 
-            if pdf1.page_count != pdf2.page_count:
-                archivos_con_diferencias[archivo] = [DistintaCantidadDePaginas(pdf1.page_count, pdf2.page_count)]
-                continue
-
-            if not self._son_iguales(pdf1, pdf2):   # Comparacion redundante
-                archivos_con_diferencias[archivo] = self.obtener_paginas_donde_hay_diferencias(pdf1, pdf2)
+            archivos_con_diferencias[archivo] = self.obtener_diferencias(pdf1, pdf2)
 
             # Una vez hechos los checkeos se cierran los archivos en la misma iteracion
             pdf1.close()
