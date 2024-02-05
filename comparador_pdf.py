@@ -29,8 +29,6 @@ class ComparadorPDF:
     def obtener_diferencias(self, pdf1: fitz.Document, pdf2: fitz.Document) -> list:
         """
         Se toma como supuesto que los archivos ya vienen abiertos
-        TODO luego del refactor grande la idea seria que aqui se tome la decision de que tipo de
-        diferencias crear y devolver en la lista
         """
         paginas_con_diferencias = []
 
@@ -49,8 +47,6 @@ class ComparadorPDF:
     def obtener_archivos_con_diferencias(self) -> dict:
         """
         Obtiene las diferencias de forma precisa de una lista de archivos pdf
-        (ahora mismo solo retorna un diccionario donde las keys son archivos
-        que tienen pares y los valores una lista de las páginas donde hay diferencias)
         """
         archivos_a_comparar = self._matchear_pdfs()
         archivos_con_diferencias = {}

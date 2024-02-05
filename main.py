@@ -12,7 +12,7 @@ def main():
     for archivo, diferencias in archivos_con_diferencias.items():
         print(f'Se encontraron las siguientes diferencias en {archivo}:')
         for diferencia in diferencias:
-            diferencia.mostrar_diferencia()
+            diferencia.mostrar()
 
 
 if __name__ == '__main__':
