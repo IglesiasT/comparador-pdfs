@@ -26,16 +26,6 @@ class ComparadorPDF:
 
         return archivos_con_pares
 
-    @staticmethod
-    def obtener_contenido(pdf: fitz.Document) -> str:
-        texto = ''
-
-        for numero_pagina in range(pdf.page_count):
-            pagina = pdf.load_page(numero_pagina)
-            texto += pagina.get_text()
-
-        return texto
-
     def obtener_diferencias(self, pdf1: fitz.Document, pdf2: fitz.Document) -> list:
         """
         Se toma como supuesto que los archivos ya vienen abiertos
@@ -71,7 +61,6 @@ class ComparadorPDF:
 
             archivos_con_diferencias[archivo] = self.obtener_diferencias(pdf1, pdf2)
 
-            # Una vez hechos los checkeos se cierran los archivos en la misma iteracion
             pdf1.close()
             pdf2.close()
 
