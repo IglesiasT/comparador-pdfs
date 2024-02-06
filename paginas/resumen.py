@@ -19,16 +19,31 @@ class Resumen:
 
     def _comparar_contenido_texto(self, pagina1, pagina2):
         """
-        Logica mas avanzada a futuro
+        En algun lado debe decir Resumen
+        Primer pagina resumen:
+            PRODUCTOS DE LANZAMIENTO
+            PRIMERA LINEA DE PROMOCION
+            SEGUNDA LINEA DE PROMOCION
+            RECORDATORIOS
+            ENTRY MARKET
         """
         assert pagina1.number == pagina2.number
 
         if pagina1.get_text() != pagina2.get_text():
             self.diferencias.append(DistintoTexto(pagina1.number))
 
+    def _comparar_pagina_indices(self, pagina_indice):
+        """
+        El parametro se compara al template de aca
+        """
+
+        pass
+
     def obtener_diferencias(self, otro_resumen):
         # TODO refactor
+
         self._comparar_cantidad_paginas(len(otro_resumen.paginas))
+        self._comparar_pagina_indices(otro_resumen.paginas[0])
         # Notar que la ejecucion sigue aunque haya distinta cantidad de paginas
         for pagina1, pagina2 in zip(self.paginas, otro_resumen.paginas):
             # self._comparar_paginas(pagina1, pagina2)
