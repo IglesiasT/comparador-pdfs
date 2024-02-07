@@ -21,22 +21,30 @@ class Resumen:
 
         return [texto for texto in lineas if texto in texto_relevante]
 
-    def _extraer_columnas_productos(self) -> dict:
-        """
-        Retorna un diccionario con el número de página como clave y sus columnas de productos extraidas como valores
+    @staticmethod
+    def _formatear_tabla(texto_tabla) -> list:
+        tabla_formateada = []
+        fila = []
 
-        ej.: {
-                1: ["Linea", "Marca", "Mercado", "MAT", "TRIM"],
-                2: ["Linea", "Marca"],
-                3: ["Linea", "Marca", "Mercado", "MAT", "TRIM"]
-            }
-        """
+        for caracter in texto_tabla:
+            if caracter != '\n':
+                fila.append(caracter)
+            else:
+                tabla_formateada.append(fila)
+                fila.clear()
+
+        return tabla_formateada
+
+    def _extraer_columnas_productos(self) -> dict:
         columnas_productos = ["Linea", "Marca", "Mercado", "MAT", "TRIM"]
         columnas_productos_extraidas = {}
-
         paginas_mercados = self.paginas[1:]
 
         for pagina in paginas_mercados:
+            header, tabla = pagina.find_tables(strategy="lines_strict").tables[1].extract()
+            tabla = self._formatear_tabla(tabla[0])    # Se acomoda a matriz con lista de listas
+            print(tabla)
+
             lineas = [linea.strip() for linea in pagina.get_text().split('\n') if linea.strip()]
             columnas_productos_extraidas[pagina.number] = [texto for texto in lineas if texto in columnas_productos]
 

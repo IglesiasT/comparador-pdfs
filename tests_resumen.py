@@ -35,7 +35,6 @@ class TestResumen(unittest.TestCase):
         columnas_esperadas = ["Linea", "Marca", "Mercado", "MAT", "TRIM"]
 
         info_extraida = self.resumen.extraer_informacion()
-        import ipdb; ipdb.set_trace()
 
         self.assertEqual(info_extraida["columnas_productos"][1], columnas_esperadas)
 
