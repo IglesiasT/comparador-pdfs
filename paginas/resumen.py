@@ -24,14 +24,10 @@ class Resumen:
     @staticmethod
     def _formatear_tabla(texto_tabla) -> list:
         tabla_formateada = []
-        fila = []
+        lineas = texto_tabla.split('\n')
 
-        for caracter in texto_tabla:
-            if caracter != '\n':
-                fila.append(caracter)
-            else:
-                tabla_formateada.append(fila)
-                fila.clear()
+        for linea in lineas:
+            tabla_formateada.append(linea)
 
         return tabla_formateada
 
