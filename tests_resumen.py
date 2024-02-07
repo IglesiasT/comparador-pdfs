@@ -8,10 +8,9 @@ class TestResumen(unittest.TestCase):
     """
     Siguiente refactor: mockear la dependencia de los PDF
     """
-    pdf_prueba = fitz.open('input1/DISTRITO-MARCELO_SERGIO_SALLUCCI.PDF')
-
     def setUp(self):
-        paginas_resumen = [pag for pag in self.pdf_prueba.pages(stop=5)]
+        pdf_prueba = fitz.open('input1/DISTRITO-MARCELO_SERGIO_SALLUCCI.PDF')
+        paginas_resumen = [pag for pag in pdf_prueba.pages(stop=5)]
         self.resumen = Resumen(paginas_resumen)
 
     def tearDown(self):
@@ -19,7 +18,7 @@ class TestResumen(unittest.TestCase):
         if hasattr(self, 'pdf_prueba') and hasattr(self.pdf_prueba, 'close'):
             self.pdf_prueba.close()
 
-    def test_extraer_indice_devuelve_indices_de_la_primer_pagina(self):
+    def test_extraer_informacion_devuelve_indices_de_la_primer_pagina(self):
         indices_esperados = [
             "PRODUCTOS DE LANZAMIENTO",
             "PRIMERA LINEA DE PROMOCION",
@@ -28,12 +27,17 @@ class TestResumen(unittest.TestCase):
             "ENTRY MARKET"
             ]
 
-        self.assertEqual(self.resumen._extraer_indices(), indices_esperados)
+        info_extraida = self.resumen.extraer_informacion()
 
-    def test_extraer_columnas_productos_devuelve_headers_tablas(self):
+        self.assertEqual(info_extraida["indices"], indices_esperados)
+
+    def test_extraer_informacion_devuelve_columnas_productos(self):
         columnas_esperadas = ["Linea", "Marca", "Mercado", "MAT", "TRIM"]
 
-        self.assertEqual(self.resumen._extraer_columnas_productos()[1], columnas_esperadas)
+        info_extraida = self.resumen.extraer_informacion()
+        import ipdb; ipdb.set_trace()
+
+        self.assertEqual(info_extraida["columnas_productos"][1], columnas_esperadas)
 
 
 if __name__ == '__main__':

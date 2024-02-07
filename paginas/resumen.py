@@ -22,12 +22,16 @@ class Resumen:
         return [texto for texto in lineas if texto in texto_relevante]
 
     def _extraer_columnas_productos(self) -> dict:
+        """
+        Retorna un diccionario con el número de página como clave y sus columnas de productos extraidas como valores
+
+        ej.: {
+                1: ["Linea", "Marca", "Mercado", "MAT", "TRIM"],
+                2: ["Linea", "Marca"],
+                3: ["Linea", "Marca", "Mercado", "MAT", "TRIM"]
+            }
+        """
         columnas_productos = ["Linea", "Marca", "Mercado", "MAT", "TRIM"]
-        # {
-        #   1: ["Linea", "Marca", "Mercado", "MAT", "TRIM"],
-        #   2: ["Linea", "Marca"],
-        #   3: ["Linea", "Marca", "Mercado", "MAT", "TRIM"]
-        # }
         columnas_productos_extraidas = {}
 
         paginas_mercados = self.paginas[1:]
@@ -37,6 +41,16 @@ class Resumen:
             columnas_productos_extraidas[pagina.number] = [texto for texto in lineas if texto in columnas_productos]
 
         return columnas_productos_extraidas
+
+    def extraer_informacion(self) -> dict:
+        """
+        Retorna un diccionario con los datos relevantes a extraer de la seccion Resumen
+        """
+
+        return {
+            "indices": self._extraer_indices(),
+            "columnas_productos": self._extraer_columnas_productos()
+        }
 
     def obtener_diferencias(self, otro_resumen):
         """
@@ -49,10 +63,11 @@ class Resumen:
             RECORDATORIOS
             ENTRY MARKET
             ],
-        "columnas_mercados": [Linea, Marca, Mercado, MAT, TRIM]
+        "columnas_productos": [Linea, Marca, Mercado, MAT, TRIM]
         }
         """
         # TODO refactor
+        info_resumen = self.extraer_informacion()
 
         # self._comparar_cantidad_paginas(len(otro_resumen.paginas))
         # self._comparar_pagina_indices(otro_resumen.paginas[0])
