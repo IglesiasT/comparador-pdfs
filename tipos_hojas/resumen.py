@@ -22,12 +22,20 @@ class Resumen:
         return [texto for texto in lineas if texto in texto_relevante]
 
     @staticmethod
-    def _formatear_tabla(texto_tabla) -> list:
+    def _formatear_tabla(texto_tabla: str) -> list:
         tabla_formateada = []
         lineas = texto_tabla.split('\n')
 
         for linea in lineas:
-            tabla_formateada.append(linea)
+            linea_formateada = linea.replace(' ≈', '')    # Limpiar caracteres raros
+            linea_formateada = linea_formateada.replace(',', '.')  # Para parseo a float
+            # Linea (investigar obtencion con regex)
+            # Marca (pensar si se puede obtener por ser unica columna en bold)
+            # Mercado
+            mat = float(linea_formateada.split(' ')[-2])
+            trim = float(linea_formateada.split(' ')[-1])
+
+            tabla_formateada.append(["Linea", "Marca", "Mercado", mat, trim])
 
         return tabla_formateada
 
@@ -37,7 +45,7 @@ class Resumen:
         paginas_mercados = self.paginas[1:]
 
         for pagina in paginas_mercados:
-            header, tabla = pagina.find_tables(strategy="lines_strict").tables[1].extract()
+            header, tabla = pagina.find_tables(strategy="lines_strict")[1].extract()
             tabla = self._formatear_tabla(tabla[0])    # Se acomoda a matriz con lista de listas
             print(tabla)
 
