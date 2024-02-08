@@ -1,7 +1,7 @@
 import unittest
 import fitz
 
-from paginas.resumen import Resumen
+from tipos_hojas.resumen import Resumen
 
 
 class TestResumen(unittest.TestCase):
