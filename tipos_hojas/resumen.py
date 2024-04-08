@@ -1,11 +1,14 @@
 from diferencias.distinta_cantidad_de_paginas import DistintaCantidadDePaginas
 from diferencias.distinto_texto import DistintoTexto
+from tipos_hojas.tipo_de_hoja import TipoDeHoja
 
 
-class Resumen:
+class Resumen(TipoDeHoja):
     def __init__(self, paginas: list):
-        self.paginas = paginas
-        self.diferencias = []
+        super()
+        self._nombre = 'Resumen'
+        self._paginas = paginas
+        self._diferencias = []
 
     def _extraer_indices(self) -> list:
         texto_relevante = [
@@ -16,7 +19,7 @@ class Resumen:
             "ENTRY MARKET"
         ]
 
-        pagina_indice = self.paginas[0]
+        pagina_indice = self._paginas[0]
         lineas = [linea.strip() for linea in pagina_indice.get_text().split('\n') if linea.strip()]
 
         return [texto for texto in lineas if texto in texto_relevante]
@@ -46,7 +49,7 @@ class Resumen:
     def _extraer_columnas_productos(self) -> dict:
         columnas_productos = ["Linea", "Marca", "Mercado", "MAT", "TRIM"]
         columnas_productos_extraidas = {}
-        paginas_mercados = self.paginas[1:]
+        paginas_mercados = self._paginas[1:]
 
         for pagina in paginas_mercados:
             header, tabla = pagina.find_tables(strategy="lines_strict")[1].extract()
@@ -82,7 +85,7 @@ class Resumen:
         "columnas_productos": [Linea, Marca, Mercado, MAT, TRIM]
         }
         """
-        
+
         # TODO refactor
         info_resumen = self.extraer_informacion()
 
@@ -92,6 +95,3 @@ class Resumen:
         # for pagina1, pagina2 in zip(self.paginas, otro_resumen.paginas):pass
         # self._comparar_paginas(pagina1, pagina2)
         # self._comparar_contenido_texto(pagina1, pagina2)
-
-        for diferencia in self.diferencias:
-            diferencia.mostrar()
