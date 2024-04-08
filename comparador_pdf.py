@@ -30,6 +30,7 @@ class ComparadorPDF:
         """
         Se toma como supuesto que los archivos ya vienen abiertos
         """
+        
         paginas_con_diferencias = []
 
         if pdf1.page_count != pdf2.page_count:
@@ -46,8 +47,10 @@ class ComparadorPDF:
 
     def obtener_archivos_con_diferencias(self) -> dict:
         """
-        Obtiene las diferencias de forma precisa de una lista de archivos pdf
+        Devuelve un diccionario con los nombres de los archivos que tienen diferencias
+        y una lista con las diferencias encontradas
         """
+
         archivos_a_comparar = self._matchear_pdfs()
         archivos_con_diferencias = {}
 

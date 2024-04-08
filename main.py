@@ -2,7 +2,6 @@ from comparador_pdf import ComparadorPDF
 
 
 def main():
-    # ruta proceso que genera los pdf: m2.backend apps pdfengine2 infrep
     directorio_inputs = 'input1'
     directorio_inputs_ok = 'input2'
 

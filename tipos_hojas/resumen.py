@@ -23,6 +23,10 @@ class Resumen:
 
     @staticmethod
     def _formatear_tabla(texto_tabla: str) -> list:
+        """
+        TODO refactor para retornar lineas directamente y mat y trim para luego ser comparados en otro lado
+        """
+
         tabla_formateada = []
         lineas = texto_tabla.split('\n')
 
@@ -78,6 +82,7 @@ class Resumen:
         "columnas_productos": [Linea, Marca, Mercado, MAT, TRIM]
         }
         """
+        
         # TODO refactor
         info_resumen = self.extraer_informacion()
 
