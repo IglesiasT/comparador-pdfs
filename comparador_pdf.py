@@ -30,7 +30,7 @@ class ComparadorPDF:
         """
         Se toma como supuesto que los archivos ya vienen abiertos
         """
-        
+
         paginas_con_diferencias = []
 
         if pdf1.page_count != pdf2.page_count:
