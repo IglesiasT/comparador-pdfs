@@ -1,17 +1,15 @@
-from diferencias.distinta_cantidad_de_paginas import DistintaCantidadDePaginas
-from diferencias.distinto_texto import DistintoTexto
 from tipos_hojas.tipo_de_hoja import TipoDeHoja
 
 
 class Resumen(TipoDeHoja):
     def __init__(self, paginas: list):
-        super()
+        super().__init__()
         self._nombre = 'Resumen'
-        self._paginas = paginas
+        self._paginas = paginas   # Se espera que sean una lista de objetos de tipo Page
         self._diferencias = []
 
     def _extraer_indices(self) -> list:
-        texto_relevante = [
+        indices = [
             "PRODUCTOS DE LANZAMIENTO",
             "PRIMERA LINEA DE PROMOCION",
             "SEGUNDA LINEA DE PROMOCION",
@@ -22,7 +20,7 @@ class Resumen(TipoDeHoja):
         pagina_indice = self._paginas[0]
         lineas = [linea.strip() for linea in pagina_indice.get_text().split('\n') if linea.strip()]
 
-        return [texto for texto in lineas if texto in texto_relevante]
+        return [texto for texto in lineas if texto in indices]
 
     @staticmethod
     def _formatear_tabla(texto_tabla: str) -> list:
