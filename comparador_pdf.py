@@ -45,7 +45,7 @@ class ComparadorPDF:
                 archivos_con_diferencias[archivo] = [DistintaCantidadDePaginas(pdf1.page_count, pdf2.page_count)]
                 continue
 
-            for numero_pagina in range(pdf1.page_count):    # Sabiendo que ambos tienen misma cantidad de páginas
+            for numero_pagina in range(pdf1.page_count):  # Sabiendo que ambos tienen misma cantidad de páginas
                 pagina_pdf1 = pdf1.load_page(numero_pagina)
                 pagina_pdf2 = pdf2.load_page(numero_pagina)
 
@@ -53,11 +53,15 @@ class ComparadorPDF:
                     diferencias.append(DistintoTexto(numero_pagina + 1))
 
             if diferencias:
-                archivos_con_diferencias[archivo] = diferencias # Si hay diferencias, se agrega al diccionario
-            
-            # El comparador es quien conoce entre que rangos hay cada tipo de pagina
-            resumen1 = Resumen(pdf1.pages(0,6))
-            resumen2 = Resumen(pdf2.pages(0,6))
+                archivos_con_diferencias[archivo] = diferencias  # Si hay diferencias, se agrega al diccionario
+
+            # El comparador es quien conoce entre que rangos hay cada tipo de página
+            paginas_resumen_1 = [pdf1.load_page(i) for i in range(6)]
+            paginas_resumen_2 = [pdf2.load_page(i) for i in range(6)]
+            resumen1 = Resumen(paginas_resumen_1)
+            resumen2 = Resumen(paginas_resumen_2)
+
+            import ipdb;ipdb.set_trace()
 
             pdf1.close()
             pdf2.close()
