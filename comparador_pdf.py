@@ -39,10 +39,11 @@ class ComparadorPDF:
         for archivo in archivos_a_comparar:
             pdf1 = fitz.open(os.path.join(self._input1, archivo))
             pdf2 = fitz.open(os.path.join(self._input2, archivo))
-            diferencias = []
+            archivos_con_diferencias[archivo] = []
 
+            # Diferencias generales de los pdfs
             if pdf1.page_count != pdf2.page_count:
-                archivos_con_diferencias[archivo] = [DistintaCantidadDePaginas(pdf1.page_count, pdf2.page_count)]
+                archivos_con_diferencias[archivo].append(DistintaCantidadDePaginas(pdf1.page_count, pdf2.page_count))
                 continue
 
             for numero_pagina in range(pdf1.page_count):  # Sabiendo que ambos tienen misma cantidad de páginas
@@ -50,19 +51,16 @@ class ComparadorPDF:
                 pagina_pdf2 = pdf2.load_page(numero_pagina)
 
                 if pagina_pdf1.get_text() != pagina_pdf2.get_text():
-                    diferencias.append(DistintoTexto(numero_pagina + 1))
+                    archivos_con_diferencias[archivo].append(DistintoTexto(numero_pagina + 1))
 
-            if diferencias:
-                archivos_con_diferencias[archivo] = diferencias  # Si hay diferencias, se agrega al diccionario
-
-            # Identificamos cada tipo de pagina
+            # Identificamos cada tipo de pagina y obtenemos sus diferencias particulares
             paginas_resumen_1 = [pdf1.load_page(i) for i in range(6)]
             paginas_resumen_2 = [pdf2.load_page(i) for i in range(6)]
             resumen1 = Resumen(paginas_resumen_1)
             resumen2 = Resumen(paginas_resumen_2)
 
-            # Delegamos la comparación en el tipo de hoja
-            archivos_con_diferencias[archivo] = resumen1.obtener_diferencias(resumen2)
+            # Delegamos la comparación en el tipo de pagina
+            archivos_con_diferencias[archivo].append(resumen1.obtener_diferencias(resumen2))    # Se agrgan las diferencias de los resumenes
 
             pdf1.close()
             pdf2.close()

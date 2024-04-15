@@ -1,3 +1,4 @@
+from diferencias.sin_diferencias import SinDiferencias
 from tipos_hojas.tipo_de_pagina import TipoDePagina
 
 
@@ -69,7 +70,7 @@ class Resumen(TipoDePagina):
             "columnas_productos": self._extraer_columnas_productos()
         }
 
-    def obtener_diferencias(self, otro_resumen):
+    def obtener_diferencias(self, otro_resumen) -> list:
         """
         ej de output esperado para luego comparar
         la idea es obtener primero el contenido y que luego por fuera se compare (renombrar funcion)
@@ -84,6 +85,8 @@ class Resumen(TipoDePagina):
         }
         """
 
+        diferencias = []
+
         # TODO refactor
         info_resumen = self.extraer_informacion()
 
@@ -93,3 +96,9 @@ class Resumen(TipoDePagina):
         # for pagina1, pagina2 in zip(self.paginas, otro_resumen.paginas):pass
         # self._comparar_paginas(pagina1, pagina2)
         # self._comparar_contenido_texto(pagina1, pagina2)
+
+        # Si luego de todas las comparaciones no hay diferencias, decimos que no tienen diferencias
+        if not diferencias:
+            diferencias.append(SinDiferencias())
+
+        return diferencias
