@@ -1,7 +1,7 @@
-from tipos_hojas.tipo_de_hoja import TipoDeHoja
+from tipos_hojas.tipo_de_pagina import TipoDePagina
 
 
-class Resumen(TipoDeHoja):
+class Resumen(TipoDePagina):
     def __init__(self, paginas: list):
         super().__init__()
         self._nombre = 'Resumen'
