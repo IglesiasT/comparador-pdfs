@@ -3,7 +3,7 @@ import fitz  # PyMuPDF
 
 from diferencias.distinta_cantidad_de_paginas import DistintaCantidadDePaginas
 from diferencias.distinto_texto import DistintoTexto
-from tipos_hojas.resumen import Resumen
+from tipos_paginas.resumen import Resumen
 
 
 class ComparadorPDF:
