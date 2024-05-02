@@ -9,7 +9,7 @@ class TestResumen(unittest.TestCase):
     Siguiente refactor: mockear la dependencia de los PDF
     """
     def setUp(self):
-        pdf_prueba = fitz.open('input1/DISTRITO-MARCELO_SERGIO_SALLUCCI.PDF')
+        pdf_prueba = fitz.open('anteriores/DISTRITO-MARCELO_SERGIO_SALLUCCI.PDF')
         paginas_resumen = [pag for pag in pdf_prueba.pages(stop=5)]
         self.resumen = Resumen(paginas_resumen)
 

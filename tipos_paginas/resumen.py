@@ -1,5 +1,5 @@
 from diferencias.sin_diferencias import SinDiferencias
-from tipos_hojas.tipo_de_pagina import TipoDePagina
+from tipos_paginas.tipo_de_pagina import TipoDePagina
 
 
 class Resumen(TipoDePagina):
