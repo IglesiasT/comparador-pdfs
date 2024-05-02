@@ -53,14 +53,14 @@ class ComparadorPDF:
                 if pagina_pdf1.get_text() != pagina_pdf2.get_text():
                     archivos_con_diferencias[archivo].append(DistintoTexto(numero_pagina + 1))
 
-            # Identificamos cada tipo de pagina y obtenemos sus diferencias particulares
-            paginas_resumen_1 = [pdf1.load_page(i) for i in range(6)]
-            paginas_resumen_2 = [pdf2.load_page(i) for i in range(6)]
-            resumen1 = Resumen(paginas_resumen_1)
-            resumen2 = Resumen(paginas_resumen_2)
-
-            # Delegamos la comparación en el tipo de pagina
-            archivos_con_diferencias[archivo].append(resumen1.obtener_diferencias(resumen2))    # Se agrgan las diferencias de los resumenes
+                # Identificamos cada tipo de pagina y obtenemos sus diferencias particulares
+                if "Resumen" in pagina_pdf1.find_tables(strategy="lines_strict")[0].extract()[0] \
+                        and "Resumen" in pagina_pdf2.find_tables(strategy="lines_strict")[0].extract()[0]:
+                    resumen1 = Resumen(pagina_pdf1)
+                    resumen2 = Resumen(pagina_pdf2)
+                    # Delegamos la comparación en el tipo de pagina
+                    # Se agregan las diferencias de los resumenes
+                    archivos_con_diferencias[archivo].append(resumen1.obtener_diferencias(resumen2))
 
             pdf1.close()
             pdf2.close()
