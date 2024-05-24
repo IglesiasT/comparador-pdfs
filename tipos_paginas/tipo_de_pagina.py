@@ -1,7 +1,10 @@
+from abc import ABC, abstractmethod
 
-class TipoDePagina:
+
+class TipoDePagina(ABC):
     def __init__(self):
         self._nombre = 'Sin nombre'
 
-    def obtener_diferencias(self, otro_tipo_de_pagina) -> list:
+    @abstractmethod
+    def obtener_diferencias(self, otra_pagina : 'TipoDePagina') -> list:
         pass
