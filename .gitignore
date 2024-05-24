@@ -156,4 +156,4 @@ cython_debug/
 .idea/
 
 # Files
-*.pdf
+*.PDF
