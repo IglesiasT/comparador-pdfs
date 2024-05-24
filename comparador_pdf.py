@@ -3,13 +3,19 @@ import fitz  # PyMuPDF
 
 from diferencias.distinta_cantidad_de_paginas import DistintaCantidadDePaginas
 from diferencias.distinto_texto import DistintoTexto
+from tipos_paginas.hoja_linea_mercado_superior import HojaLineaMercadoSuperior
 from tipos_paginas.resumen import Resumen
+from tipos_paginas.tipo_de_pagina import TipoDePagina
 
 
 class ComparadorPDF:
     def __init__(self, input1, input2):
         self._input1 = str(input1)
         self._input2 = str(input2)
+        self._mapeo_ids_paginas = {
+            "hoja_linea_mercado_superior": HojaLineaMercadoSuperior,
+            "resumen": Resumen
+        }
 
     def _matchear_pdfs(self) -> list:
         """
@@ -26,6 +32,13 @@ class ComparadorPDF:
                 archivos_con_pares.append(archivo)
 
         return archivos_con_pares
+    
+    def _obtener_tipo_de_pagina(self, pagina_pdf) -> str:
+        """
+        Recibe una pagina y devuelve el id de su tipo para que pueda ser mapeada
+        """
+
+        return pagina_pdf.get_text().split('id:')[1].strip()
 
     def obtener_archivos_con_diferencias(self) -> dict:
         """
@@ -54,13 +67,17 @@ class ComparadorPDF:
                     archivos_con_diferencias[archivo].append(DistintoTexto(numero_pagina + 1))
 
                 # Identificamos cada tipo de pagina y obtenemos sus diferencias particulares
-                if "Resumen" in pagina_pdf1.find_tables(strategy="lines_strict")[0].extract()[0] \
-                        and "Resumen" in pagina_pdf2.find_tables(strategy="lines_strict")[0].extract()[0]:
-                    resumen1 = Resumen(pagina_pdf1)
-                    resumen2 = Resumen(pagina_pdf2)
-                    # Delegamos la comparación en el tipo de pagina
-                    # Se agregan las diferencias de los resumenes
-                    archivos_con_diferencias[archivo].append(resumen1.obtener_diferencias(resumen2))
+                tipo_de_pagina_pdf1 = self._mapeo_ids_paginas.get(self._obtener_id_pagina(pagina_pdf1), None)
+                tipo_de_pagina_pdf2 = self._mapeo_ids_paginas.get(self._obtener_id_pagina(pagina_pdf2), None)
+                assert tipo_de_pagina_pdf1 == tipo_de_pagina_pdf2
+                
+                if not tipo_de_pagina_pdf1 or not tipo_de_pagina_pdf2:
+                    # No se pudo mapear el tipo de página
+                    continue
+                
+                # Delegamos la comparación en el tipo de pagina
+                # Se agregan las diferencias de los resumenes
+                archivos_con_diferencias[archivo].append(tipo_de_pagina_pdf1.obtener_diferencias(tipo_de_pagina_pdf2))
 
             pdf1.close()
             pdf2.close()
