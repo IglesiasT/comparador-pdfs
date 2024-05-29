@@ -2,10 +2,10 @@ from comparador_pdf import ComparadorPDF
 
 
 def main():
-    directorio_inputs = 'anteriores'
-    directorio_inputs_ok = 'nuevos'
+    directorio_inputs = 'nuevos'
+    directorio_inputs_ok = 'anteriores'
 
-    comparador = ComparadorPDF(directorio_inputs, directorio_inputs_ok)
+    comparador = ComparadorPDF(directorio_inputs_ok, directorio_inputs)
     archivos_con_diferencias = comparador.obtener_archivos_con_diferencias()
 
     for archivo, diferencias in archivos_con_diferencias.items():
