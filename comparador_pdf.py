@@ -14,8 +14,9 @@ class ComparadorPDF:
         self._input2 = str(input2)
         self._mapeo_ids_paginas = {
             "hoja_linea_mercado_superior": HojaLineaMercadoSuperior,
-            "resumen": Resumen
+            "hoja_resumen": Resumen
         }
+
 
     def _matchear_pdfs(self) -> list:
         """
@@ -32,13 +33,18 @@ class ComparadorPDF:
                 archivos_con_pares.append(archivo)
 
         return archivos_con_pares
-    
-    def _obtener_tipo_de_pagina(self, pagina_pdf) -> str:
-        """
-        Recibe una pagina y devuelve el id de su tipo para que pueda ser mapeada
-        """
 
-        return pagina_pdf.get_text().split('id:')[1].strip()
+    def _obtener_tipo_de_pagina(self, pagina_pdf) -> TipoDePagina:
+        """
+        Recibe una pagina y devuelve su tipo para que pueda ser comparada
+        """
+        
+        id_pagina = pagina_pdf.get_text().split('id:')[1].strip()
+        id_pagina = id_pagina.replace(' ', '_')  # Para que sea compatible con las keys de las clases
+        tipo_pagina = self._mapeo_ids_paginas[id_pagina]
+
+        return tipo_pagina()
+    
 
     def obtener_archivos_con_diferencias(self) -> dict:
         """
@@ -63,20 +69,11 @@ class ComparadorPDF:
                 pagina_pdf1 = pdf1.load_page(numero_pagina)
                 pagina_pdf2 = pdf2.load_page(numero_pagina)
 
-                if pagina_pdf1.get_text() != pagina_pdf2.get_text():
-                    archivos_con_diferencias[archivo].append(DistintoTexto(numero_pagina + 1))
-
-                # Identificamos cada tipo de pagina y obtenemos sus diferencias particulares
-                tipo_de_pagina_pdf1 = self._mapeo_ids_paginas.get(self._obtener_id_pagina(pagina_pdf1), None)
-                tipo_de_pagina_pdf2 = self._mapeo_ids_paginas.get(self._obtener_id_pagina(pagina_pdf2), None)
-                assert tipo_de_pagina_pdf1 == tipo_de_pagina_pdf2
-                
-                if not tipo_de_pagina_pdf1 or not tipo_de_pagina_pdf2:
-                    # No se pudo mapear el tipo de página
-                    continue
+                # Identificamos cada tipo de página y obtenemos sus diferencias particulares
+                tipo_de_pagina_pdf1 = self._obtener_tipo_de_pagina(pagina_pdf1)
+                tipo_de_pagina_pdf2 = self._obtener_tipo_de_pagina(pagina_pdf2)
                 
                 # Delegamos la comparación en el tipo de pagina
-                # Se agregan las diferencias de los resumenes
                 archivos_con_diferencias[archivo].append(tipo_de_pagina_pdf1.obtener_diferencias(tipo_de_pagina_pdf2))
 
             pdf1.close()
