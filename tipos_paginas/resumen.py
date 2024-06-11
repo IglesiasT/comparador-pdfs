@@ -1,4 +1,6 @@
 from diferencias.sin_diferencias import SinDiferencias
+from diferencias.variacion_mat import VariacionMAT
+from diferencias.variacion_trim import VariacionTRIM
 from tipos_paginas.tipo_de_pagina import TipoDePagina
 
 
@@ -34,7 +36,7 @@ class Resumen(TipoDePagina):
     def _comparar_columnas_productos(self, otro_resumen) -> list:
         """
         """
-        
+
         diferencias = []
         header, tabla = self.pagina.find_tables(strategy="lines_strict")[1].extract()
         otro_header, otra_tabla = otro_resumen.pagina.find_tables(strategy="lines_strict")[1].extract()
