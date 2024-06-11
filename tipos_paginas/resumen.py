@@ -3,25 +3,10 @@ from tipos_paginas.tipo_de_pagina import TipoDePagina
 
 
 class Resumen(TipoDePagina):
-    def __init__(self, paginas: list):
-        super().__init__()
+    def __init__(self, pagina):
+        super().__init__(pagina)
         self._nombre = 'Resumen'
-        self._paginas = paginas   # Se espera que sean una lista de objetos de tipo Page
-        self._diferencias = []
 
-    def _extraer_indices(self) -> list:
-        indices = [
-            "PRODUCTOS DE LANZAMIENTO",
-            "PRIMERA LINEA DE PROMOCION",
-            "SEGUNDA LINEA DE PROMOCION",
-            "RECORDATORIOS",
-            "ENTRY MARKET"
-        ]
-
-        pagina_indice = self._paginas[0]
-        lineas = [linea.strip() for linea in pagina_indice.get_text().split('\n') if linea.strip()]
-
-        return [texto for texto in lineas if texto in indices]
 
     @staticmethod
     def _formatear_tabla(texto_tabla: str) -> list:
@@ -41,61 +26,51 @@ class Resumen(TipoDePagina):
             mat = float(linea_formateada.split(' ')[-2])
             trim = float(linea_formateada.split(' ')[-1])
 
-            tabla_formateada.append(["Linea", "Marca", "Mercado", mat, trim])
+            tabla_formateada.append(["Linea", "Marca", "Mercado", mat, trim])   # Harcodeado, reemplazar por linea, marca y mercado reales de cada fila
 
         return tabla_formateada
+    
 
-    def _extraer_columnas_productos(self) -> dict:
-        columnas_productos = ["Linea", "Marca", "Mercado", "MAT", "TRIM"]
-        columnas_productos_extraidas = {}
-        paginas_mercados = self._paginas[1:]
-
-        for pagina in paginas_mercados:
-            header, tabla = pagina.find_tables(strategy="lines_strict")[1].extract()
-            tabla = self._formatear_tabla(tabla[0])    # Se acomoda a matriz con lista de listas
-            print(tabla)
-
-            lineas = [linea.strip() for linea in pagina.get_text().split('\n') if linea.strip()]
-            columnas_productos_extraidas[pagina.number] = [texto for texto in lineas if texto in columnas_productos]
-
-        return columnas_productos_extraidas
-
-    def extraer_informacion(self) -> dict:
+    def _comparar_columnas_productos(self, otro_resumen) -> list:
         """
-        Retorna un diccionario con los datos relevantes a extraer de la seccion Resumen
         """
+        
+        diferencias = []
+        header, tabla = self.pagina.find_tables(strategy="lines_strict")[1].extract()
+        otro_header, otra_tabla = otro_resumen.pagina.find_tables(strategy="lines_strict")[1].extract()
+        tabla = self._formatear_tabla(tabla[0])
+        otra_tabla = self._formatear_tabla(otra_tabla[0])
 
-        return {
-            "indices": self._extraer_indices(),
-            "columnas_productos": self._extraer_columnas_productos()
-        }
+        # Comparamos los headers de las tablas TODO refactor agregar diferencia si no coinciden
+        assert header[0].split() == otro_header[0].split() == ['Linea', 'Marca', 'Mercado', 'MAT', 'TRIM']
+
+        # Comparamos variacion de MAT y TRIM
+        limite_variacion = 0.05
+        for i in range(len(tabla)):
+            mat = tabla[i][3]
+            otro_mat = otra_tabla[i][3]
+            trim = tabla[i][4]
+            otro_trim = otra_tabla[i][4]
+
+            if abs(mat - otro_mat) > limite_variacion:
+                print(f"Variacion de MAT en fila {i} es mayor a {limite_variacion}")
+                diferencias.append(VariacionMAT(mat, otro_mat))
+            if abs(trim - otro_trim) > limite_variacion:
+                print(f"Variacion de TRIM en fila {i} es mayor a {limite_variacion}")
+                diferencias.append(VariacionTRIM(trim, otro_trim))
+        
+        return diferencias
+    
 
     def obtener_diferencias(self, otro_resumen) -> list:
         """
-        ej de output esperado para luego comparar
-        la idea es obtener primero el contenido y que luego por fuera se compare (renombrar funcion)
-        {"indices": [
-            PRODUCTOS DE LANZAMIENTO
-            PRIMERA LINEA DE PROMOCION
-            SEGUNDA LINEA DE PROMOCION
-            RECORDATORIOS
-            ENTRY MARKET
-            ],
-        "columnas_productos": [Linea, Marca, Mercado, MAT, TRIM]
-        }
         """
 
+        if not isinstance(otro_resumen, type(self)):    # TODO mover a la clase madre
+            raise TypeError("Los tipos de página no coinciden")
+
         diferencias = []
-
-        # TODO refactor
-        info_resumen = self.extraer_informacion()
-
-        # self._comparar_cantidad_paginas(len(otro_resumen.paginas))
-        # self._comparar_pagina_indices(otro_resumen.paginas[0])
-        # Notar que la ejecucion sigue aunque haya distinta cantidad de paginas
-        # for pagina1, pagina2 in zip(self.paginas, otro_resumen.paginas):pass
-        # self._comparar_paginas(pagina1, pagina2)
-        # self._comparar_contenido_texto(pagina1, pagina2)
+        diferencias.extend(self._comparar_columnas_productos(otro_resumen))
 
         # Si luego de todas las comparaciones no hay diferencias, decimos que no tienen diferencias
         if not diferencias:

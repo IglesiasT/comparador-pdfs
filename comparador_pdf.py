@@ -43,7 +43,7 @@ class ComparadorPDF:
         id_pagina = id_pagina.replace(' ', '_')  # Para que sea compatible con las keys de las clases
         tipo_pagina = self._mapeo_ids_paginas[id_pagina]
 
-        return tipo_pagina()
+        return tipo_pagina(pagina_pdf)
     
 
     def obtener_archivos_con_diferencias(self) -> dict:
