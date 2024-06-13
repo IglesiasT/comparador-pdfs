@@ -7,5 +7,5 @@ class TipoDePagina(ABC):
         self.pagina = pagina
 
     @abstractmethod
-    def obtener_diferencias(self, otra_pagina : 'TipoDePagina') -> list:
+    def obtener_diferencias(self, otra_pagina: 'TipoDePagina') -> list:
         pass

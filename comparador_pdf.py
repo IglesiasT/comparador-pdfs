@@ -3,6 +3,9 @@ import fitz  # PyMuPDF
 
 from diferencias.distinta_cantidad_de_paginas import DistintaCantidadDePaginas
 from diferencias.distinto_texto import DistintoTexto
+from tipos_paginas.hoja_d import HojaD
+from tipos_paginas.hoja_entidades_competencia import HojaEntidadesCompetencia
+from tipos_paginas.hoja_heart import HojaHeart
 from tipos_paginas.hoja_linea_mercado_superior import HojaLineaMercadoSuperior
 from tipos_paginas.resumen import Resumen
 from tipos_paginas.tipo_de_pagina import TipoDePagina
@@ -14,9 +17,11 @@ class ComparadorPDF:
         self._input2 = str(input2)
         self._mapeo_ids_paginas = {
             "hoja_linea_mercado_superior": HojaLineaMercadoSuperior,
-            "hoja_resumen": Resumen
+            "hoja_resumen": Resumen,
+            "hoja_heart": HojaHeart,
+            "hoja_d": HojaD,
+            "hoja_entidades_competencia": HojaEntidadesCompetencia,
         }
-
 
     def _matchear_pdfs(self) -> list:
         """
@@ -38,13 +43,12 @@ class ComparadorPDF:
         """
         Recibe una pagina y devuelve su tipo para que pueda ser comparada
         """
-        
+
         id_pagina = pagina_pdf.get_text().split('id:')[1].strip()
         id_pagina = id_pagina.replace(' ', '_')  # Para que sea compatible con las keys de las clases
         tipo_pagina = self._mapeo_ids_paginas[id_pagina]
 
         return tipo_pagina(pagina_pdf)
-    
 
     def obtener_archivos_con_diferencias(self) -> dict:
         """
@@ -65,16 +69,16 @@ class ComparadorPDF:
                 archivos_con_diferencias[archivo].append(DistintaCantidadDePaginas(pdf1.page_count, pdf2.page_count))
                 continue
 
-            for numero_pagina in range(pdf1.page_count):  # Sabiendo que ambos tienen misma cantidad de páginas
-                pagina_pdf1 = pdf1.load_page(numero_pagina)
-                pagina_pdf2 = pdf2.load_page(numero_pagina)
+            for i in range(10):  # Sabiendo que ambos tienen misma cantidad de páginas TODO cambiar range a pdf1.page_count
+                pagina_pdf1 = pdf1.load_page(i)
+                pagina_pdf2 = pdf2.load_page(i)
 
                 # Identificamos cada tipo de página y obtenemos sus diferencias particulares
                 tipo_de_pagina_pdf1 = self._obtener_tipo_de_pagina(pagina_pdf1)
                 tipo_de_pagina_pdf2 = self._obtener_tipo_de_pagina(pagina_pdf2)
-                
+
                 # Delegamos la comparación en el tipo de pagina
-                archivos_con_diferencias[archivo].append(tipo_de_pagina_pdf1.obtener_diferencias(tipo_de_pagina_pdf2))
+                archivos_con_diferencias[archivo] += tipo_de_pagina_pdf1.obtener_diferencias(tipo_de_pagina_pdf2)
 
             pdf1.close()
             pdf2.close()
