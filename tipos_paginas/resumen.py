@@ -9,7 +9,6 @@ class Resumen(TipoDePagina):
         super().__init__(pagina)
         self._nombre = 'Resumen'
 
-
     @staticmethod
     def _formatear_tabla(texto_tabla: str) -> list:
         """
@@ -20,7 +19,7 @@ class Resumen(TipoDePagina):
         lineas = texto_tabla.split('\n')
 
         for linea in lineas:
-            linea_formateada = linea.replace(' ≈', '')    # Limpiar caracteres raros
+            linea_formateada = linea.replace(' ≈', '')  # Limpiar caracteres raros
             linea_formateada = linea_formateada.replace(',', '.')  # Para parseo a float
             # Linea (investigar obtencion con regex)
             # Marca (pensar si se puede obtener por ser unica columna en bold)
@@ -28,10 +27,9 @@ class Resumen(TipoDePagina):
             mat = float(linea_formateada.split(' ')[-2])
             trim = float(linea_formateada.split(' ')[-1])
 
-            tabla_formateada.append(["Linea", "Marca", "Mercado", mat, trim])   # Harcodeado, reemplazar por linea, marca y mercado reales de cada fila
+            tabla_formateada.append(["Linea", "Marca", "Mercado", mat, trim])  # Harcodeado, reemplazar por linea, marca y mercado reales de cada fila
 
         return tabla_formateada
-    
 
     def _comparar_columnas_productos(self, otro_resumen) -> list:
         """
@@ -60,15 +58,14 @@ class Resumen(TipoDePagina):
             if abs(trim - otro_trim) > limite_variacion:
                 print(f"Variacion de TRIM en fila {i} es mayor a {limite_variacion}")
                 diferencias.append(VariacionTRIM(trim, otro_trim))
-        
+
         return diferencias
-    
 
     def obtener_diferencias(self, otro_resumen) -> list:
         """
         """
 
-        if not isinstance(otro_resumen, type(self)):    # TODO mover a la clase madre
+        if not isinstance(otro_resumen, type(self)):  # TODO mover a la clase madre
             raise TypeError("Los tipos de página no coinciden")
 
         diferencias = []
