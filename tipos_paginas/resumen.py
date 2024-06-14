@@ -10,24 +10,25 @@ class Resumen(TipoDePagina):
         self._nombre = 'Resumen'
 
     @staticmethod
-    def _formatear_tabla(texto_tabla: str) -> list:
+    def _formatear_tabla(tabla) -> list:
         """
-        TODO refactor para retornar lineas directamente y mat y trim para luego ser comparados en otro lado
+        En caso de que queramos comparar linea marca y mercado, probar identificarlos como
+        el anterior y el posterior al texto en bold (marca)
         """
 
         tabla_formateada = []
-        lineas = texto_tabla.split('\n')
+        lineas_tabla = tabla[0].split('\n')
 
-        for linea in lineas:
-            linea_formateada = linea.replace(' ≈', '')  # Limpiar caracteres raros
+        for linea_tabla in lineas_tabla:
+            linea_formateada = linea_tabla.replace(' ≈', '')  # Limpiar caracteres raros
             linea_formateada = linea_formateada.replace(',', '.')  # Para parseo a float
-            # Linea (investigar obtencion con regex)
-            # Marca (pensar si se puede obtener por ser unica columna en bold)
-            # Mercado
+            linea = ''  # investigar obtencion con regex)
+            marca = ''  # pensar si se puede obtener por ser unica columna en bold
+            mercado = ''
             mat = float(linea_formateada.split(' ')[-2])
             trim = float(linea_formateada.split(' ')[-1])
 
-            tabla_formateada.append(["Linea", "Marca", "Mercado", mat, trim])  # Harcodeado, reemplazar por linea, marca y mercado reales de cada fila
+            tabla_formateada.append([linea, marca, mercado, mat, trim])
 
         return tabla_formateada
 
@@ -38,8 +39,8 @@ class Resumen(TipoDePagina):
         diferencias = []
         header, tabla = self.pagina.find_tables(strategy="lines_strict")[1].extract()
         otro_header, otra_tabla = otro_resumen.pagina.find_tables(strategy="lines_strict")[1].extract()
-        tabla = self._formatear_tabla(tabla[0])
-        otra_tabla = self._formatear_tabla(otra_tabla[0])
+        tabla = self._formatear_tabla(tabla)
+        otra_tabla = self._formatear_tabla(otra_tabla)
 
         # Comparamos los headers de las tablas TODO refactor agregar diferencia si no coinciden
         assert header[0].split() == otro_header[0].split() == ['Linea', 'Marca', 'Mercado', 'MAT', 'TRIM']
