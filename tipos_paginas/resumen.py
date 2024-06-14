@@ -53,10 +53,10 @@ class Resumen(TipoDePagina):
             trim = tabla[i][4]
             otro_trim = otra_tabla[i][4]
 
-            if abs(mat - otro_mat) > limite_variacion:
+            if abs((otro_mat / mat) - 1) > limite_variacion:
                 print(f"Variacion de MAT en fila {i} es mayor a {limite_variacion}")
                 diferencias.append(VariacionMAT(mat, otro_mat))
-            if abs(trim - otro_trim) > limite_variacion:
+            if abs((otro_trim / trim) - 1) > limite_variacion:
                 print(f"Variacion de TRIM en fila {i} es mayor a {limite_variacion}")
                 diferencias.append(VariacionTRIM(trim, otro_trim))
 
