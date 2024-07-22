@@ -5,6 +5,7 @@ from diferencias.distinta_cantidad_de_paginas import DistintaCantidadDePaginas
 from diferencias.distinto_texto import DistintoTexto
 from tipos_paginas.hoja_d import HojaD
 from tipos_paginas.hoja_entidades_competencia import HojaEntidadesCompetencia
+from tipos_paginas.hoja_fichas_medico import HojaFichasMedico
 from tipos_paginas.hoja_heart import HojaHeart
 from tipos_paginas.hoja_linea_mercado_superior import HojaLineaMercadoSuperior
 from tipos_paginas.resumen import Resumen
@@ -22,7 +23,8 @@ class ComparadorPDF:
             "hoja_heart": HojaHeart,
             "hoja_d": HojaD,
             "hoja_entidades_competencia": HojaEntidadesCompetencia,
-            "hoja_targeting": HojaTargeting
+            "hoja_targeting": HojaTargeting,
+            "hoja_fichas_medico": HojaFichasMedico,
         }
 
     def _matchear_pdfs(self) -> list:
@@ -45,8 +47,7 @@ class ComparadorPDF:
         """
         Recibe una pagina y devuelve su tipo para que pueda ser comparada
         """
-
-        id_pagina = pagina_pdf.get_text().split('id:')[1].strip()
+        id_pagina = pagina_pdf.get_textpage().extractText().split('id:')[1].strip()
         id_pagina = id_pagina.replace(' ', '_')  # Para que sea compatible con las keys de las clases
         tipo_pagina = self._mapeo_ids_paginas[id_pagina]
 
@@ -71,7 +72,7 @@ class ComparadorPDF:
                 archivos_con_diferencias[archivo].append(DistintaCantidadDePaginas(pdf1.page_count, pdf2.page_count))
                 continue
 
-            for i in range(10):  # Sabiendo que ambos tienen misma cantidad de páginas TODO cambiar range a pdf1.page_count
+            for i in range(pdf1.page_count):  # Sabiendo que ambos tienen misma cantidad de páginas
                 pagina_pdf1 = pdf1.load_page(i)
                 pagina_pdf2 = pdf2.load_page(i)
 
