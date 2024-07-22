@@ -8,6 +8,7 @@ from tipos_paginas.hoja_entidades_competencia import HojaEntidadesCompetencia
 from tipos_paginas.hoja_heart import HojaHeart
 from tipos_paginas.hoja_linea_mercado_superior import HojaLineaMercadoSuperior
 from tipos_paginas.resumen import Resumen
+from tipos_paginas.hoja_targeting import HojaTargeting
 from tipos_paginas.tipo_de_pagina import TipoDePagina
 
 
@@ -21,6 +22,7 @@ class ComparadorPDF:
             "hoja_heart": HojaHeart,
             "hoja_d": HojaD,
             "hoja_entidades_competencia": HojaEntidadesCompetencia,
+            "hoja_targeting": HojaTargeting
         }
 
     def _matchear_pdfs(self) -> list:
